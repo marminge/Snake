@@ -1,2 +1,4 @@
 # Snake
-Snake game.
+Snake game written in C.
+
+(First game)
