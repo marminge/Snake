@@ -1,5 +1,6 @@
 #include "../include/snake.h"
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_rect.h>
 #include <SDL2/SDL_render.h>
 #include <stdbool.h>
 #include <stdlib.h>
@@ -12,33 +13,25 @@ typedef struct snake {
   SDL_Rect snakeRect;
 } Snake;
 
-Snake *createSnake(SDL_Renderer *pRenderer, int *totalSnakes, int posX,
-                   int posY) {
+Snake *createSnake(int *totalSnakes, int posX, int posY) {
   Snake *pSnake = malloc(sizeof(struct snake));
-  pSnake->pRenderer = pRenderer;
-  SDL_Rect snakeRect;
-  snakeRect.h = 20;
-  snakeRect.w = 20;
-  snakeRect.x = posX;
-  snakeRect.y = posY;
-  pSnake->snakeRect = snakeRect;
+  pSnake->snakeRect.h = 20;
+  pSnake->snakeRect.w = 20;
+  pSnake->snakeRect.x = posX;
+  pSnake->snakeRect.y = posY;
   pSnake->xSpeed = 0;
   pSnake->ySpeed = 0;
-  *totalSnakes = *totalSnakes + 1;
+  *totalSnakes += 1;
   return pSnake;
 }
 
-Snake *createTail(SDL_Renderer *pRenderer, Snake *snakes[50],
-                  int *totalSnakes) {
+Snake *createTail(Snake *snakes[50], int *totalSnakes) {
   Snake *pTail = malloc(sizeof(struct snake));
-  pTail->pRenderer = pRenderer;
-  SDL_Rect snakeRect;
-  snakeRect.h = 20;
-  snakeRect.w = 20;
-  snakeRect.x = snakes[*totalSnakes - 1]->snakeRect.x;
-  snakeRect.y = snakes[*totalSnakes - 1]->snakeRect.y;
-  pTail->snakeRect = snakeRect;
-  *totalSnakes = *totalSnakes + 1;
+  pTail->snakeRect.h = 20;
+  pTail->snakeRect.w = 20;
+  pTail->snakeRect.x = snakes[*totalSnakes - 1]->snakeRect.x;
+  pTail->snakeRect.y = snakes[*totalSnakes - 1]->snakeRect.y;
+  *totalSnakes += 1;
   return pTail;
 }
 
@@ -63,19 +56,23 @@ void updateSnake(Snake *snakes[50], int *totalSnakes) {
       snakes[i]->snakeRect.y = snakes[i - 1]->snakeRect.y;
     }
   }
+  move(snakes);
+}
+
+void move(Snake *snakes[50]) {
   snakes[0]->snakeRect.x = snakes[0]->snakeRect.x + snakes[0]->xSpeed * 20;
   snakes[0]->snakeRect.y = snakes[0]->snakeRect.y + snakes[0]->ySpeed * 20;
 }
 
-void eatFood(Snake *snakes[50], int *totalSnakes, SDL_Renderer *pRenderer) {
-  snakes[*totalSnakes] = createTail(pRenderer, snakes, totalSnakes);
+void eatFood(Snake *snakes[50], int *totalSnakes) {
+  snakes[*totalSnakes] = createTail(snakes, totalSnakes);
 }
 
 bool hitItself(Snake *snakes[50], int *totalSnakes) {
   if (*totalSnakes > 1) {
     for (int i = 1; i < *totalSnakes; i++) {
-      if (snakes[0]->snakeRect.x == snakes[i]->snakeRect.x &&
-          snakes[0]->snakeRect.y == snakes[i]->snakeRect.y) {
+      if (SDL_HasIntersection(&(snakes[0]->snakeRect),
+                              &(snakes[i]->snakeRect))) {
         return true;
       }
     }

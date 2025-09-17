@@ -2,11 +2,11 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_error.h>
 #include <SDL2/SDL_render.h>
+#include <SDL2/SDL_surface.h>
 #include <SDL2/SDL_ttf.h>
 
 typedef struct text {
   TTF_Font *pFont;
-  SDL_Surface *pSurface;
   SDL_Texture *pTexture;
   SDL_Renderer *pRenderer;
   SDL_Rect textRect;
@@ -20,13 +20,13 @@ Text *createText(int posX, int posY, SDL_Renderer *pRenderer, char *string) {
   if (pText->pFont == 0) {
     fprintf(stderr, "Error opening font: %s", SDL_GetError());
   }
-  pText->pSurface = TTF_RenderText_Solid(pText->pFont, string, textColor);
-  pText->pTexture =
-      SDL_CreateTextureFromSurface(pText->pRenderer, pText->pSurface);
-  pText->textRect.w = pText->pSurface->w;
-  pText->textRect.h = pText->pSurface->h;
+  SDL_Surface *pSurface = TTF_RenderText_Solid(pText->pFont, string, textColor);
+  pText->pTexture = SDL_CreateTextureFromSurface(pText->pRenderer, pSurface);
+  pText->textRect.w = pSurface->w;
+  pText->textRect.h = pSurface->h;
   pText->textRect.x = posX;
   pText->textRect.y = posY;
+  SDL_FreeSurface(pSurface);
   return pText;
 }
 

@@ -61,7 +61,7 @@ void run(Game *pGame) {
 
     if (collideWithFood(pGame)) {
       setNewPos(pGame->pFood, generateNum(), generateNum());
-      eatFood(pGame->snakes, &(pGame->totalSnakes), pGame->pRenderer);
+      eatFood(pGame->snakes, &(pGame->totalSnakes));
     }
 
     SDL_SetRenderDrawColor(pGame->pRenderer, 230, 0, 0, 0);
@@ -104,10 +104,9 @@ bool init(Game *pGame) {
   srand(time(NULL));
   pGame->pFood = spawnFood(pGame->pRenderer, generateNum(), generateNum());
   pGame->totalSnakes = 0;
-  pGame->snakes[pGame->totalSnakes] =
-      createSnake(pGame->pRenderer, &(pGame->totalSnakes),
-                  WINDOW_WIDTH / 2 + 10, WINDOW_HEIGHT / 2 + 10);
-  pGame->pText = createText(200, 200, pGame->pRenderer, "Game Over!");
+  pGame->snakes[pGame->totalSnakes] = createSnake(
+      &(pGame->totalSnakes), WINDOW_WIDTH / 2 + 10, WINDOW_HEIGHT / 2 + 10);
+  pGame->pText = createText(220, 200, pGame->pRenderer, "Game Over!");
   return true;
 }
 
@@ -136,7 +135,7 @@ void handleInput(Game *pGame, bool *quitGame) {
         getInput(&(pGame->snakes[0]), 1, 0);
         break;
       case SDL_SCANCODE_SPACE:
-        eatFood(pGame->snakes, &(pGame->totalSnakes), pGame->pRenderer);
+        eatFood(pGame->snakes, &(pGame->totalSnakes));
       default:
         break;
       }

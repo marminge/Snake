@@ -10,12 +10,10 @@ typedef struct food {
 Food *spawnFood(SDL_Renderer *pRenderer, int posX, int posY) {
   Food *pFood = malloc(sizeof(struct food));
   pFood->pRenderer = pRenderer;
-  SDL_Rect foodRect;
-  foodRect.h = 20;
-  foodRect.w = 20;
-  foodRect.x = posX;
-  foodRect.y = posY;
-  pFood->foodRect = foodRect;
+  pFood->foodRect.h = 20;
+  pFood->foodRect.w = 20;
+  pFood->foodRect.x = posX;
+  pFood->foodRect.y = posY;
   return pFood;
 }
 
